@@ -6,15 +6,17 @@ import base64
 import json
 from typing import List
 
-class Location():
+class Location:
     def __init__(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
-class Detected():
+        
+class Detected:
     def __init__(self, image, location):
         self.image = image
         self.location = location
-class Output():
+
+class Output:
     detected: List[Detected]
 
 app = FastAPI()
@@ -25,7 +27,7 @@ origins = [
     "*"
 ]
  
-path = "fake-aws/"
+path = os.path.join("fake-aws")
 
 app.add_middleware(
     CORSMiddleware, 
@@ -36,30 +38,30 @@ app.add_middleware(
 
 def load_model(task_name):
     if task_name == "road":
-        return YOLO("models/road_inspection.pt")
+        return YOLO(os.path.join("models", "road_inspection.pt"))
     elif task_name == "building":
-        return YOLO("models/building_cracks.pt")
+        return YOLO(os.path.join("models", "building_cracks.pt"))
     elif task_name == "field":
-        return YOLO("models/fawn_detection.pt")
+        return YOLO(os.path.join("models", "fawn_detection.pt"))
 
 def get_predictions(model, task_name, task_id):
-    results = model(f"{path}{task_id}/images")
+    results = model(os.path.join(path, str(task_id), "images"))
     taskid = str(task_name) + str(task_id)
     os.makedirs(taskid, exist_ok=True)
 
     for i, result in enumerate(results):
-        filepath = os.path.join(taskid, result.path.split("/")[-1])
+        filepath = os.path.join(taskid, os.path.basename(result.path))
         img = result.save(filename=filepath)
         
     return return_predictions(task_name, task_id)
 
 def return_predictions(task_name, task_id):
-    image_dir = f"{task_name}{task_id}"
+    image_dir = str(task_name) + str(task_id)
     response = []
     jsons = []
 
-    for files in os.listdir(f"{path}{task_id}/jsons"):
-        file_path = os.path.join(f"{path}{task_id}/jsons", files)
+    for files in os.listdir(os.path.join(path, str(task_id), "jsons")):
+        file_path = os.path.join(path, str(task_id), "jsons", files)
 
         with open(file_path) as f:
             data = json.load(f)
@@ -76,17 +78,15 @@ def return_predictions(task_name, task_id):
                     long = j["long"]
                     lat = j["lat"]
                     location = Location(long, lat)
-                    if (filename == file):
+                    if filename == file:
                         response.append(Detected(encoded_data, location))
                 
     return response
 
 @app.get("/task/{task_name}/{task_id}")
-async def root(task_name:str, task_id:int):
-    if (os.path.exists(str(task_name) + str(task_id))):
+async def root(task_name: str, task_id: int):
+    if os.path.exists(str(task_name) + str(task_id)):
         return return_predictions(task_name, task_id)
     else:
         model = load_model(task_name)
         return get_predictions(model, task_name, task_id)
-    
-    

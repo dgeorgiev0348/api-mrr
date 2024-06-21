@@ -130,7 +130,7 @@ button:focus {
 }
 
 img {
-    width: 150px;
-    height: 150px;
+    width: 25%;
+    height: 250px;
     border-radius: 5px;
 }
