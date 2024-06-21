@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Displaying Base64 Images</title>
+        <title>Results</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="reset.css" />
+        <link rel="stylesheet" href="styles.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <style>
             #map {
@@ -12,66 +17,74 @@
     </head>
 
     <body>
-        <h1>Base64 Images</h1>
-        <form method="GET" action="/get-data">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            <br><br>
-            <label for="user_id">User ID:</label>
-            <input type="number" id="user_id" name="user_id" required>
-            <br><br>
-            <button type="submit">Submit</button>
-        </form>
+        <div class="PageContainer">
+            <div class="Heading">
+                <h1>Base64 Images</h1>
+            </div>
+            <div class="UpperContainer">
+                <div class="LeftSideContainer">
+                    <div class="FormContainer">
+                        <form method="GET" action="/get-data">
+                            <input type="text" id="name" name="name" placeholder="Task name">
+                            <br><br>
+                            <input type="number" id="user_id" name="user_id" placeholder="User ID">
+                            <br><br>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="MapContainer">
+                    <div id="map"></div>
+                    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                </div>
+            </div>
+            <div id="images" class="ImagesContainer">
+            </div>
+            <script>
+                const form = document.querySelector("form");
+                form.addEventListener("submit", async (event) => {
+                    event.preventDefault();
 
-        <div id="map"></div>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+                    const imageContainer = document.getElementById("images");
 
-        <div id="images"></div>
+                    imageContainer.innerHTML = ''
 
-        <script>
-            const form = document.querySelector("form");
-            form.addEventListener("submit", async (event) => {
-                event.preventDefault();
+                    const name = document.getElementById("name").value;
+                    const userId = document.getElementById("user_id").value;
 
-                const imageContainer = document.getElementById("images");
+                    connection_str = "http://127.0.0.1:8000/task/"+ name + "/" + userId;
+                    const response = await fetch(connection_str);
+                    const imageData = await response.json();    
 
-                imageContainer.innerHTML = ''
+                    var locations = []
+                    imageData.forEach(image=> {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = `data:image/jpg;base64,${image.image}`;
+                        imageContainer.appendChild(imgElement);
+                        long = image.location.longitude
+                        lat = image.location.latitude
+                        console.log(long)
+                        console.log(lat)
+                        locations.push({"latitude": lat, "longitude": long},)
+                    })
 
-                const name = document.getElementById("name").value;
-                const userId = document.getElementById("user_id").value;
+                    
+                    var map = L.map('map').setView([51.505, -0.09], 13);
 
-                connection_str = "http://127.0.0.1:8000/task/"+ name + "/" + userId;
-                const response = await fetch(connection_str);
-                const imageData = await response.json();    
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
 
-                var locations = []
-                imageData.forEach(image=> {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = `data:image/jpg;base64,${image.image}`;
-                    imageContainer.appendChild(imgElement);
-                    long = image.location.longitude
-                    lat = image.location.latitude
-                    console.log(long)
-                    console.log(lat)
-                    locations.push({"latitude": lat, "longitude": long},)
-                })
-
-                
-                var map = L.map('map').setView([51.505, -0.09], 13);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-
-                function addMarkers(locations) {
-                    for (var i = 0; i < locations.length; i++) {
-                        var location = locations[i];
-                        L.marker([location.latitude, location.longitude]).addTo(map);
+                    function addMarkers(locations) {
+                        for (var i = 0; i < locations.length; i++) {
+                            var location = locations[i];
+                            L.marker([location.latitude, location.longitude]).addTo(map);
+                        }
                     }
-                }
 
-                addMarkers(locations);
-                })
-        </script>
+                    addMarkers(locations);
+                    })
+            </script>
+        </div>
     </body>
 </html>

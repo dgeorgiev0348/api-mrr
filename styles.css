@@ -1,0 +1,136 @@
+body {
+    display: flex;
+    flex-direction: column wrap;
+    box-sizing: border-box;
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #115cfa;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-family: "Lato", sans-serif;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.PageContainer, 
+.Heading, 
+.UpperContainer, 
+.LeftSideContainer, 
+.FormContainer, 
+.MapContainer, 
+.ImagesContainer {
+    box-sizing: border-box;
+}
+
+.PageContainer {
+    width: 100%;
+    padding: 3rem;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.Heading {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.UpperContainer {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    margin-top: 1.5rem;
+    justify-content: space-between;
+}
+
+.LeftSideContainer {
+    width: 25%;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.FormContainer, .MapContainer, .ImagesContainer{
+    height: 250px;
+    border-radius: 15px;
+}
+
+.FormContainer, .ImagesContainer {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.FormContainer {
+    width: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-around;
+}
+
+form {
+    padding: 1.5rem;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+label {
+    font-size: 0.75rem;
+}
+
+input, button {
+    border-radius: 5px;
+    height: 35px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+input {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+button, button::after {
+    background-color: #ffffff;
+    color: #115cfa;
+    font-weight: 600;
+    border: white;
+    padding: 5px;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+button:focus {
+    background-color: #115cfa;
+    color: #ffffff;
+}
+
+.MapContainer{
+    width: 75%;
+    padding-left: 3rem;
+    display: flex;
+    flex-direction: row wrap;
+}
+
+#map {
+    display: flex;
+    height: 250px;
+    max-height: 250px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.2);;
+}
+
+.ImagesContainer {
+    width: 100%;
+    margin: 3rem 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    overflow: auto;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+}
