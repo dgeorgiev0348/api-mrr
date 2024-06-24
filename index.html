@@ -9,8 +9,8 @@
         <link rel="stylesheet" href="styles.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <style>
-            #map {  
-                height: 800px;
+            #map {
+                height: 600px;
                 width: 100%;
             }
         </style>
@@ -38,12 +38,16 @@
                     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
                 </div>
             </div>
+            <div id="images" class="ImagesContainer">
+            </div>
             <script>
                 const form = document.querySelector("form");
                 form.addEventListener("submit", async (event) => {
                     event.preventDefault();
 
                     const imageContainer = document.getElementById("images");
+
+                    imageContainer.innerHTML = ''
 
                     const name = document.getElementById("name").value;
                     const userId = document.getElementById("user_id").value;
@@ -54,40 +58,31 @@
 
                     var locations = []
                     imageData.forEach(image=> {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = `data:image/jpg;base64,${image.image}`;
+                        imageContainer.appendChild(imgElement);
                         long = image.location.longitude
                         lat = image.location.latitude
+                        console.log(long)
+                        console.log(lat)
                         locations.push({"latitude": lat, "longitude": long},)
                     })
 
-                    avgLong = 0
-                    avgLat = 0
-                    locations.forEach(l => {
-                        avgLong += l.latitude
-                        avgLat += l.longitude
-                    });
                     
-                    avgLong = avgLong / locations.length
-                    avgLat = avgLat / locations.length
-
-                    var map = L.map('map').setView([avgLong, avgLat], 17);
+                    var map = L.map('map').setView([51.505, -0.09], 13);
 
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     }).addTo(map);
 
-                    imageData.forEach(function (image, i) {
-                        const imgElement = document.createElement("img");
-                        imgElement.src = `data:image/jpg;base64,${image.image}`;
-                        imgElement.style.width = "300px"
-                        imgElement.style.height = "300px"
-                        long = image.location.longitude
-                        lat = image.location.latitude
-                        var location = locations[i];
-                        var m = L.marker([location.latitude, location.longitude])
-                        m.addTo(map);
-                        m.bindPopup(imgElement)
-                    })
+                    function addMarkers(locations) {
+                        for (var i = 0; i < locations.length; i++) {
+                            var location = locations[i];
+                            L.marker([location.latitude, location.longitude]).addTo(map);
+                        }
+                    }
 
+                    addMarkers(locations);
                     })
             </script>
         </div>
