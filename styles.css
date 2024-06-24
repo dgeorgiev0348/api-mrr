@@ -88,7 +88,7 @@ input {
     background-color: rgba(255, 255, 255, 0.7);
 }
 
-button, button::after {
+button {
     background-color: #ffffff;
     color: #115cfa;
     font-weight: 600;
@@ -100,7 +100,7 @@ button:hover {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
-button:focus {
+button:active {
     background-color: #115cfa;
     color: #ffffff;
 }
