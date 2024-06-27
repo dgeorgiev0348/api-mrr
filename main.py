@@ -42,7 +42,7 @@ def load_model(task_name):
     elif task_name == "building":
         return YOLO(os.path.join("models", "building_cracks.pt"))
     elif task_name == "field":
-        return YOLO(os.path.join("models", "fawn_detection.pt"))
+        return YOLO(os.path.join("models", "nest_fawn_detector.pt"))
 
 def get_predictions(model, task_name, task_id):
     results = model(os.path.join(path, str(task_id), "images"))
